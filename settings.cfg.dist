@@ -1,0 +1,20 @@
+[app]
+name = Dummy-Api
+env = dev
+host = 0.0.0.0
+port = 80
+debug = false
+
+[saas_db]
+user = root
+password =
+hostname = localhost
+port = 3306
+database = dummy_saas_db
+
+[instance]
+user = root
+password =
+hostname = localhost
+port = 3306
+database = dummy_instance
