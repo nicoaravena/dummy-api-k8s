@@ -1,4 +1,4 @@
-fastapi
-uvicorn
-mysqlclient
-sqlalchemy
+fastapi==0.111.*
+uvicorn==0.30.*
+mysqlclient==2.2.*
+sqlalchemy==2.0.*
