@@ -1,38 +1,36 @@
 import os
 import configparser
 
-DEFAULTS_FILE = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__), os.path.pardir, "settings.cfg.dist"
-    )
+__app_name__ = "DummyApi"
+
+CONF_PATH = os.getenv(
+    "CONFIGS_FOLDER",
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
 )
 
-conf = configparser.ConfigParser()
+conf = configparser.ConfigParser(
+    defaults={
+        "env": "dev",
+        "host": "0.0.0.0",
+        "port": "8000",
+        "debug": "false",
+    },
+    default_section=__app_name__,
+)
 
-conf.read([DEFAULTS_FILE])
-
+conf.read(
+    [os.path.join(CONF_PATH, "settings.cfg.dist")]
+)
 
 # search conf main configs in main path
-LOCAL_CONF_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.path.pardir, "settings.cfg")
+LOCAL_CONF_PATH = os.path.join(
+    CONF_PATH, "settings.cfg"
 )
 
-PATHS = []
+_files = [os.path.join(CONF_PATH, "settings.cfg.dist")]
 
-if os.path.exists(LOCAL_CONF_PATH):
-    PATHS.append(LOCAL_CONF_PATH)
+for entry in os.scandir(CONF_PATH):
+    if entry.name.endswith('.cfg') and entry.is_file():
+        _files.append(os.path.join(CONF_PATH, entry.name))
 
-if conf.get("app", "name") and conf.get("app", "env"):
-    # By default go to /etc/dummy.k8s.d/dev/dummy-api
-    OVERRIDES_CONF_PATH = os.path.abspath(
-        os.path.join(
-            os.getenv("CONFIG_FOLDER", "/etc/dummy.k8s.d"),
-            conf.get("app", "env"),
-            "{}.cfg".format(conf.get("app", "name").lower()),
-        )
-    )
-    if os.path.exists(OVERRIDES_CONF_PATH):
-        PATHS.append(OVERRIDES_CONF_PATH)
-
-if PATHS:
-    conf.read(PATHS)
+conf.read(_files)

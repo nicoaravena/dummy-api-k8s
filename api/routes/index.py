@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter
 
-from .. import conf
+from .. import __app_name__, conf
 
 router = APIRouter()
 
@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/")
 def index():
     return {
-        "name": conf.get("app", "name"),
-        "env": conf.get("app", "env"),
+        "name": __app_name__,
+        "env": conf.get(__app_name__, "env"),
         "version": os.getenv("APP_VERSION", "0.1.0"),
     }
